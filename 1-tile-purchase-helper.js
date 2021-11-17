@@ -16,7 +16,7 @@ let delay = 2000;
 (async function() {
     'use strict';
     if (JSON.parse(sessionStorage.getItem('proceed')) !== true && localStorage.getItem('SELECTED_TILE_IDS').length > 18){
-        sessionStorage.setItem('proceed',confirm('Begin 1 tile buying?'));
+        sessionStorage.setItem('proceed',confirm('Initiate the helper?'));
         sessionStorage.setItem('TILES_TO_GO',localStorage.getItem('SELECTED_TILE_IDS'));
         sessionStorage.setItem('nextTile',0);
     }
