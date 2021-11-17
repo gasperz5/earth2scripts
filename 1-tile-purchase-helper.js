@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         1 Tile Purchase Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.1.1
 // @description  Helper for 1 tile purchases, jewel farms, tilearts
 // @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
 // @include      https://*app.earth2.io/
@@ -15,7 +15,7 @@ let delay = 2000;
 
 (async function() {
     'use strict';
-    if (JSON.parse(sessionStorage.getItem('proceed')) !== true && localStorage.getItem('SELECTED_TILE_IDS') != '[]') {
+    if (JSON.parse(sessionStorage.getItem('proceed')) !== true && localStorage.getItem('SELECTED_TILE_IDS') != '[]' && localStorage.getItem('SELECTED_TILE_IDS').length > 18){
         sessionStorage.setItem('proceed',confirm('Begin 1 tile buying?'));
         sessionStorage.setItem('TILES_TO_GO',localStorage.getItem('SELECTED_TILE_IDS'));
         sessionStorage.setItem('nextTile',0);
