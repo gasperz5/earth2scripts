@@ -11,7 +11,7 @@
 
 console.log('1 Tile Purchase Helper Script added');
 
-let delay = 2000;
+let delay = 500;
 
 (async function() {
     'use strict';
@@ -34,13 +34,14 @@ let delay = 2000;
             await sleep(3000);
         }else{
             while (!window.location.href.includes('#propertyInfo')) {
-                await sleep(200);
+                await sleep(50);
             }
+        iteration = parseInt(sessionStorage.getItem('nextTile'));
 
             await sleep(delay);
-            window.location.href = '#';
             localStorage.setItem('SELECTED_TILE_IDS','['+tiles[iteration]+']');
             sessionStorage.setItem('nextTile',iteration+1);
+            await sleep(delay);
 
             if (localStorage.getItem('SELECTED_TILE_IDS')=='[undefined]') {
                 localStorage.setItem('SELECTED_TILE_IDS','[]');
@@ -53,7 +54,7 @@ let delay = 2000;
                     displayLength: 4000
                 })
             }else{
-                location.reload();
+            window.open(window.location.origin,"_self");
                 await sleep(3000);
             }
         }
