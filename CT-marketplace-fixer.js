@@ -11,7 +11,7 @@
 
 console.log('Extra Marketplace Filters Script by Gašper added');
 
-(async function () {
+(async function() {
 
     'use strict';
     let fpb, lcb;
@@ -41,16 +41,16 @@ console.log('Extra Marketplace Filters Script by Gašper added');
 
     async function end() {
         while (true) {
-            while (document.getElementsByClassName("big-table table")[0].getElementsByClassName("row").length == 1) {
+            while (document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row").length == 1) {
                 await sleep(100);
             }
-            if (document.getElementsByClassName("big-table table")[0].getElementsByClassName("row").length == 0) {
+            if (document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row").length == 0) {
                 break;
             }
-            while (document.getElementsByClassName("big-table table")[0].getElementsByClassName("row")[1].innerHTML == k) {
+            while (document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row")[1].innerHTML == k) {
                 await sleep(100);
             }
-            k = document.getElementsByClassName("big-table table")[0].getElementsByClassName("row")[1].innerHTML;
+            k = document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row")[1].innerHTML;
             if (fpb) {
                 hideFP();
             } else {
@@ -86,10 +86,10 @@ console.log('Extra Marketplace Filters Script by Gašper added');
     }
 
     function hideLC() {
-        for (let index = 1; index < document.getElementsByClassName("big-table table")[0].getElementsByClassName("row").length; index++) {
+        for (let index = 1; index < document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row").length; index++) {
             for (let index2 = 0; index2 < loct.length; index2++) {
-                if (document.getElementsByClassName("big-table table")[0].getElementsByClassName("row")[index].getElementsByTagName("img")[0].getAttribute("src").toString().substring(42) == loct[index2]) {
-                    document.getElementsByClassName("big-table table")[0].getElementsByClassName("row")[index].style.display = "none";
+                if (document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row")[index].getElementsByTagName("img")[0].getAttribute("src").toString().substring(42) == loct[index2]) {
+                    document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row")[index].style.display = "none";
                     break;
                 }
             }
@@ -97,8 +97,8 @@ console.log('Extra Marketplace Filters Script by Gašper added');
     }
 
     function unhideLC() {
-        for (let index = 1; index < document.getElementsByClassName("big-table table")[0].getElementsByClassName("row").length; index++) {
-            document.getElementsByClassName("big-table table")[0].getElementsByClassName("row")[index].removeAttribute("style");
+        for (let index = 1; index < document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row").length; index++) {
+            document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row")[index].removeAttribute("style");
         }
         if (fpb) {
             hideFP()
@@ -118,10 +118,10 @@ console.log('Extra Marketplace Filters Script by Gašper added');
     }
 
     function hideFP() {
-        for (let index = 1; index < document.getElementsByClassName("big-table table")[0].getElementsByClassName("row").length; index++) {
+        for (let index = 1; index < document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row").length; index++) {
             for (let index2 = 0; index2 < froz.length; index2++) {
-                if (document.getElementsByClassName("big-table table")[0].getElementsByClassName("row")[index].getElementsByTagName("a")[0].href.substring(36) == froz[index2]) {
-                    document.getElementsByClassName("big-table table")[0].getElementsByClassName("row")[index].style.display = "none";
+                if (document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row")[index].getElementsByTagName("a")[0].href.substring(36) == froz[index2]) {
+                    document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row")[index].style.display = "none";
                     break;
                 }
             }
@@ -129,8 +129,8 @@ console.log('Extra Marketplace Filters Script by Gašper added');
     }
 
     function unhideFP() {
-        for (let index = 1; index < document.getElementsByClassName("big-table table")[0].getElementsByClassName("row").length; index++) {
-            document.getElementsByClassName("big-table table")[0].getElementsByClassName("row")[index].removeAttribute("style");
+        for (let index = 1; index < document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row").length; index++) {
+            document.getElementsByClassName("big-table table-legacy")[0].getElementsByClassName("row")[index].removeAttribute("style");
         }
         if (lcb) {
             hideLC();
