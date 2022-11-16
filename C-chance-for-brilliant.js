@@ -42,7 +42,6 @@ console.log('Chance for a brilliant Script by Gašper added');
             })
             .catch(err => {
                 console.log(err)
-            }
-            );
+            });
     }
 })();
