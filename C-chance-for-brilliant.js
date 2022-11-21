@@ -1,12 +1,8 @@
 // ==UserScript==
 // @name         Chance for a brilliant
-// @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.1.1
 // @description  Uses leaderboard's data to calculate the chance for a brilliant
 // @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
-// @include      https://*app.earth2.io/
-// @icon         https://www.google.com/s2/favicons?domain=earth2.io
-// @grant        none
 // ==/UserScript==
 
 console.log('Chance for a brilliant Script by Gašper added');
