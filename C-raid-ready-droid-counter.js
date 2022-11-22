@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name         Raid ready droid counter
-// @version      0.1.1
+// @version      0.1.2
 // @description  Calculates the number of raid ready droids you can support
 // @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
+// @support      https://www.buymeacoffee.com/gasper
 // ==/UserScript==
 
 console.log('Raid ready droid counter Script by Gašper added');

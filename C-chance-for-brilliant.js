@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name         Chance for a brilliant
-// @version      0.1.1
+// @version      0.1.2
 // @description  Uses leaderboard's data to calculate the chance for a brilliant
 // @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
+// @support      https://www.buymeacoffee.com/gasper
 // ==/UserScript==
 
 console.log('Chance for a brilliant Script by Gašper added');
