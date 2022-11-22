@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         List unslotted properties
-// @version      0.3
+// @version      0.3.1
 // @description  Downloads a file containing all your properties that are not fully slotted or slotted with jewels clashing
 // @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
 // @support      https://www.buymeacoffee.com/gasper
@@ -57,7 +57,7 @@ console.log('List unslotted properties Script by Gašper added');
 
     let unefficient = 0;
     let unslottedProps = 0;
-    let data = 'Id,Tiles,Description,Total Slots,Empty Slots,Efficency,Link\r\n';
+    let data = 'Description,Tiles,Total Slots,Empty Slots,Efficency,Link\r\n';
 
     properties.sort((a, b) => {
         if (b.empty_slots_count - a.empty_slots_count != 0) return b.empty_slots_count - a.empty_slots_count;
@@ -85,12 +85,12 @@ console.log('List unslotted properties Script by Gašper added');
             // console.log(`Property ${element.id} has ${element.empty_slots_count} empty slots. Slot it at https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}`);
         }
         totalJewelSlots += element.slots_count;
-        data += `${element.id},${element.tiles},${element.description.split(',').join('')},${element.slots_count},${element.empty_slots_count},${element.efficency},https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}\r\n`;
+        data += `${element.description.split(',').join('')},${element.tiles},${element.slots_count},${element.empty_slots_count},${element.efficency},"=HYPERLINK("https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}")"\r\n`;
     }
 
-    console.log(`There are ${unslottedProps} unslotted properties and ${unefficient} properties with clashing jewel sloting`);
-    console.log(`There are ${emptyJewelSlots} empty jewel slots out of ${totalJewelSlots} total jewel slots`);
-    // await createDownloadFile(data, 'slottings');
+    const metadata = `For properties with size ${T1_MIN_PROPERTY_SIZE}+ or more for T1 and ${T2_MIN_PROPERTY_SIZE}+ for T2\r\nThere is ${unslottedProps} unslotted properties and ${unefficient} properties with clashing jewel sloting\r\nThere is ${emptyJewelSlots} empty jewel slots out of ${totalJewelSlots} total jewel slots\r\n`;
+    console.log(metadata);
+    await createDownloadFile(metadata + data, 'slottings');
     console.log('Downloaded file slottings.csv');
 
 
@@ -126,7 +126,7 @@ console.log('List unslotted properties Script by Gašper added');
         let blob = new File(["\uFEFF" + content], { type: 'text/csv;charset=utf-8' });
         let file = new File([blob], link.download);
         link.href = window.URL.createObjectURL(file);
-        link.click();
+        if(confirm('Download the file?')) link.click();
     };
 
 })();
