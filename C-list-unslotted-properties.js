@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         List unslotted properties
-// @version      0.3.1
+// @version      0.3.2
 // @description  Downloads a file containing all your properties that are not fully slotted or slotted with jewels clashing
 // @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
 // @support      https://www.buymeacoffee.com/gasper
@@ -20,7 +20,6 @@ console.log('List unslotted properties Script by Gašper added');
     let page = 1;
 
     do {
-        console.log(`Getting page ${page}`);
         await grabPage(page)
             .then(responseData => {
                 const data = JSON.parse(responseData);
@@ -50,6 +49,7 @@ console.log('List unslotted properties Script by Gašper added');
                 console.log('canceling');
                 return;
             });
+        console.log(`Got page ${page} of ${Math.floor(count / 100)}`);
         page++;
         await sleep(1000);
 
@@ -91,8 +91,6 @@ console.log('List unslotted properties Script by Gašper added');
     const metadata = `For properties with size ${T1_MIN_PROPERTY_SIZE}+ or more for T1 and ${T2_MIN_PROPERTY_SIZE}+ for T2\r\nThere is ${unslottedProps} unslotted properties and ${unefficient} properties with clashing jewel sloting\r\nThere is ${emptyJewelSlots} empty jewel slots out of ${totalJewelSlots} total jewel slots\r\n`;
     console.log(metadata);
     await createDownloadFile(metadata + data, 'slottings');
-    console.log('Downloaded file slottings.csv');
-
 
     async function grabPage(page) {
         const promise = new Promise((resolve, reject) => {
@@ -126,7 +124,10 @@ console.log('List unslotted properties Script by Gašper added');
         let blob = new File(["\uFEFF" + content], { type: 'text/csv;charset=utf-8' });
         let file = new File([blob], link.download);
         link.href = window.URL.createObjectURL(file);
-        if(confirm('Download the file?')) link.click();
+        if (confirm('Download the file?')) {
+            link.click()
+            console.log(`Downloaded file ${prefix}.csv`);
+        };
     };
 
 })();
