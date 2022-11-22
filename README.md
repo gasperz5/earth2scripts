@@ -4,7 +4,7 @@
 
 ##### For Scripts that start with C
 1. Select the desired script from the list above and copy the code.
-2. Open web developer console (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>J</kbd>), paste in the code you copied and press <kbd>Enter</kbd>.
+2. Open web developer console (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd>), paste in the code you copied and press <kbd>Enter</kbd>.
 
 Check [Eruda Console for Mobile Browsers](https://github.com/liriliri/eruda) if you wish to try on mobile.
 
