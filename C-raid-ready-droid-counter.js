@@ -26,7 +26,7 @@ console.log('Raid ready droid counter Script by Gašper added');
         console.log(`Getting page ${page}`);
         await grabPage(id, page)
             .then(responseData => {
-                data = JSON.parse(responseData);
+                const data = JSON.parse(responseData);
                 for (let i = 0; i < data.data.length; i++) {
                     const element = data.data[i];
                     if (element.attributes.tileCount < 4) {
@@ -46,11 +46,8 @@ console.log('Raid ready droid counter Script by Gašper added');
 
     } while (pageCount > page * 60 && bitEnough);
 
-
-    const total = await getDroidCount(properties);
-    console.log('Properties with less that 4 tiles skipped as they support 0 raid ready droids');
-    console.log(`In total you can support ${total} raid ready droids`);
-    console.log('This may change over time as E2 plans evolve');
+    const file = await getDroidCount(properties);
+    createDownloadFile(file, 'raid-ready-droids');
 
 
     async function grabPage(id, page) {
@@ -77,14 +74,19 @@ console.log('Raid ready droid counter Script by Gašper added');
 
     async function getDroidCount(properties) {
         let count = 0;
-        for (let i = properties.length - 1; i >= 0; i--) {
+        let data = 'Droid Count, Tile Count, Description, Link\r\n';
+        for (let i = 0; i < properties.length; i++) {
             const element = properties[i];
             const tileCount = element.attributes.tileCount;
-            const droidCount = await maxDroidPerProperty(element.attributes.tileCount);
+            const droidCount = await maxDroidPerProperty(tileCount);
             count += droidCount;
-            console.log(`${droidCount} raid ready droids are supported on the property ${element.attributes.description} with ${tileCount} tiles: https://app.earth2.io/#propertyInfo/${element.id}`);
+            data += `${droidCount},${tileCount},${element.attributes.description.split(',').join('')},"=HYPERLINK("https://app.earth2.io/#propertyInfo/${element.id}")"\r\n`;
+            // console.log(`${droidCount} raid ready droids are supported on the property ${element.attributes.description} with ${tileCount} tiles: https://app.earth2.io/#propertyInfo/${element.id}`);
         }
-        return count;
+        console.log('Properties with less that 4 tiles skipped as they support 0 raid ready droids');
+        console.log(`In total you can support ${count} raid ready droids`);
+        console.log('This may change over time as E2 plans evolve');
+        return `,Properties with less that 4 tiles skipped as they support 0 raid ready droids\r\n,In total you can support ${count} raid ready droids\r\n,This may change over time as E2 plans evolve\r\n\r\n` + data;
     }
 
     async function maxDroidPerProperty(tiles) {
@@ -95,4 +97,15 @@ console.log('Raid ready droid counter Script by Gašper added');
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    async function createDownloadFile(content, prefix) {
+        let link = document.createElement('a');
+        link.download = `${prefix}.csv`;
+        let blob = new File(["\uFEFF" + content], { type: 'text/csv;charset=utf-8' });
+        let file = new File([blob], link.download);
+        link.href = window.URL.createObjectURL(file);
+        if (confirm('Download the file?')) {
+            link.click()
+            console.log(`Downloaded file ${prefix}.csv`);
+        };
+    };
 })();
