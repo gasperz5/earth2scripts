@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Raid ready droid counter
-// @version      0.1.2
+// @version      0.1.3
 // @description  Calculates the number of raid ready droids you can support
 // @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
 // @support      https://www.buymeacoffee.com/gasper
@@ -74,23 +74,30 @@ console.log('Raid ready droid counter Script by Gašper added');
 
     async function getDroidCount(properties) {
         let count = 0;
-        let data = 'Droid Count, Tile Count, Description, Link\r\n';
+        let countLeaked = 0;
+        let data = 'Droid Count, Droid Count Leaked, Tile Count, Description, Link\r\n';
         for (let i = 0; i < properties.length; i++) {
             const element = properties[i];
             const tileCount = element.attributes.tileCount;
-            const droidCount = await maxDroidPerProperty(tileCount);
+            const droidCount = maxDroidPerProperty(tileCount);
+            const droidCountLeaked = maxDroidPerPropertyLeaked(tileCount);
             count += droidCount;
-            data += `${droidCount},${tileCount},${element.attributes.description.split(',').join('')},"=HYPERLINK("https://app.earth2.io/#propertyInfo/${element.id}")"\r\n`;
+            countLeaked += droidCountLeaked;
+            data += `${droidCount},${droidCountLeaked},${tileCount},${element.attributes.description.split(',').join('')},"=HYPERLINK("https://app.earth2.io/#propertyInfo/${element.id}")"\r\n`;
             // console.log(`${droidCount} raid ready droids are supported on the property ${element.attributes.description} with ${tileCount} tiles: https://app.earth2.io/#propertyInfo/${element.id}`);
         }
         console.log('Properties with less that 4 tiles skipped as they support 0 raid ready droids');
         console.log(`In total you can support ${count} raid ready droids`);
+        console.log(`In total you can support ${countLeaked} raid ready droids (leaked image removed from the news article)`);
         console.log('This may change over time as E2 plans evolve');
-        return `,Properties with less that 4 tiles skipped as they support 0 raid ready droids\r\n,In total you can support ${count} raid ready droids\r\n,This may change over time as E2 plans evolve\r\n\r\n` + data;
+        return `,Properties with less that 4 tiles skipped as they support 0 raid ready droids\r\n,In total you can support ${count} raid ready droids\r\n,In total you can support ${countLeaked} raid ready droids (leaked image removed from the news article)\r\n,This may change over time as E2 plans evolve\r\n\r\n` + data;
     }
 
-    async function maxDroidPerProperty(tiles) {
+    function maxDroidPerProperty(tiles) {
         return tiles >= 4 ? tiles >= 10 ? tiles >= 30 ? tiles >= 60 ? tiles >= 100 ? tiles >= 200 ? tiles >= 325 ? tiles >= 475 ? tiles >= 650 ? tiles >= 750 ? 10 : 9 : 8 : 7 : 6 : 5 : 4 : 3 : 2 : 1 : 0;
+    }
+    function maxDroidPerPropertyLeaked(tiles) {
+        return tiles >= 4 ? tiles >= 10 ? tiles >= 30 ? tiles >= 750 ? 10 : parseInt(tiles/10) :2 : 1 : 0;
     }
 
     async function sleep(ms) {
