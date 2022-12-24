@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Raid ready droid counter
-// @version      0.1.3
-// @description  Calculates the number of raid ready droids you can support
+// @version      0.1.4
+// @description  Calculates the number of raid ready cydroids you can support
 // @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
 // @support      https://www.buymeacoffee.com/gasper
 // ==/UserScript==
 
-console.log('Raid ready droid counter Script by Gašper added');
+console.log('Raid ready cydroid counter Script by Gašper added');
 
 
 (async function () {
@@ -46,8 +46,8 @@ console.log('Raid ready droid counter Script by Gašper added');
 
     } while (pageCount > page * 60 && bitEnough);
 
-    const file = await getDroidCount(properties);
-    createDownloadFile(file, 'raid-ready-droids');
+    const file = await getCydroidCount(properties);
+    createDownloadFile(file, 'raid-ready-cydroids');
 
 
     async function grabPage(id, page) {
@@ -72,32 +72,32 @@ console.log('Raid ready droid counter Script by Gašper added');
         return promise;
     };
 
-    async function getDroidCount(properties) {
+    async function getCydroidCount(properties) {
         let count = 0;
         let countLeaked = 0;
-        let data = 'Droid Count, Droid Count Leaked, Tile Count, Description, Link\r\n';
+        let data = 'Cyroid Count, Tile Count, Description, Link\r\n';
         for (let i = 0; i < properties.length; i++) {
             const element = properties[i];
             const tileCount = element.attributes.tileCount;
-            const droidCount = maxDroidPerProperty(tileCount);
-            const droidCountLeaked = maxDroidPerPropertyLeaked(tileCount);
-            count += droidCount;
-            countLeaked += droidCountLeaked;
-            data += `${droidCount},${droidCountLeaked},${tileCount},${element.attributes.description.split(',').join('')},"=HYPERLINK("https://app.earth2.io/#propertyInfo/${element.id}")"\r\n`;
-            // console.log(`${droidCount} raid ready droids are supported on the property ${element.attributes.description} with ${tileCount} tiles: https://app.earth2.io/#propertyInfo/${element.id}`);
+            const cydroidCount = maxCydroidPerProperty(tileCount);
+            const cydroidCountLeaked = maxCydroidPerPropertyLeaked(tileCount);
+            count += cydroidCount;
+            countLeaked += cydroidCountLeaked;
+            data += `${cydroidCount},${tileCount},${element.attributes.description.split(',').join('')},"=HYPERLINK("https://app.earth2.io/#propertyInfo/${element.id}")"\r\n`;
+            // console.log(`${cydroidCount} raid ready cydroids are supported on the property ${element.attributes.description} with ${tileCount} tiles: https://app.earth2.io/#propertyInfo/${element.id}`);
         }
-        console.log('Properties with less that 4 tiles skipped as they support 0 raid ready droids');
-        console.log(`In total you can support ${count} raid ready droids`);
-        console.log(`In total you can support ${countLeaked} raid ready droids (leaked image removed from the news article)`);
+        console.log('Properties with less that 4 tiles skipped as they support 0 raid ready cydroids');
+        console.log(`In total you can support ${count} raid ready cydroids (Deep Dive Raiding Video and Stage 2 Website)`);
+        console.log(`In total you can support ${countLeaked} raid ready cydroids (leaked image removed from the news article)`);
         console.log('This may change over time as E2 plans evolve');
-        return `,Properties with less that 4 tiles skipped as they support 0 raid ready droids\r\n,In total you can support ${count} raid ready droids\r\n,In total you can support ${countLeaked} raid ready droids (leaked image removed from the news article)\r\n,This may change over time as E2 plans evolve\r\n\r\n` + data;
+        return `,Properties with less that 4 tiles skipped as they support 0 raid ready cydroids\r\n,In total you can support ${count} raid ready cydroids (Deep Dive Raiding Video and Stage 2 Website)\r\n,In total you can support ${countLeaked} raid ready cydroids (leaked image removed from the news article)\r\n,This may change over time as E2 plans evolve\r\n\r\n` + data;
     }
 
-    function maxDroidPerProperty(tiles) {
+    function maxCydroidPerProperty(tiles) {
         return tiles >= 4 ? tiles >= 10 ? tiles >= 30 ? tiles >= 60 ? tiles >= 100 ? tiles >= 200 ? tiles >= 325 ? tiles >= 475 ? tiles >= 650 ? tiles >= 750 ? 10 : 9 : 8 : 7 : 6 : 5 : 4 : 3 : 2 : 1 : 0;
     }
-    function maxDroidPerPropertyLeaked(tiles) {
-        return tiles >= 4 ? tiles >= 10 ? tiles >= 30 ? tiles >= 750 ? 10 : parseInt(tiles/10) :2 : 1 : 0;
+    function maxCydroidPerPropertyLeaked(tiles) {
+        return tiles >= 4 ? tiles >= 10 ? tiles >= 30 ? tiles >= 750 ? 10 : parseInt(tiles / 10) : 2 : 1 : 0;
     }
 
     async function sleep(ms) {
@@ -113,6 +113,8 @@ console.log('Raid ready droid counter Script by Gašper added');
         if (confirm('Download the file?')) {
             link.click()
             console.log(`Downloaded file ${prefix}.csv`);
-        };
+        } else {
+            console.log(`File ${prefix}.csv not downloaded`);
+        }
     };
 })();
