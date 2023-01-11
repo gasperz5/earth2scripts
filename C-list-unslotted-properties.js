@@ -28,7 +28,9 @@ console.log('List unslotted properties Script by Gašper added');
 
 
                     let efficency = 1;
+                    let brilliants = 0;
                     element.slotted_jewel_set.forEach(e => {
+                        if (e.quality_level == 'BRILLIANT') brilliants++;
                         efficency *= e.effect_strength_coefficient;
                     });
                     properties.push({
@@ -38,6 +40,7 @@ console.log('List unslotted properties Script by Gašper added');
                         slots_count: element.slots_count,
                         empty_slots_count: element.slots_count - element.slotted_jewel_set.length,
                         efficency: efficency,
+                        brilliants: brilliants,
                         tier: element.landfield_tier,
                     });
                 }
@@ -57,7 +60,7 @@ console.log('List unslotted properties Script by Gašper added');
 
     let unefficient = 0;
     let unslottedProps = 0;
-    let data = 'Description,Tiles,Total Slots,Empty Slots,Efficency,Link\r\n';
+    let data = 'Description,Tiles,Total Slots,Empty Slots,Efficency,Link,Brilliants\r\n';
 
     properties.sort((a, b) => {
         if (b.empty_slots_count - a.empty_slots_count != 0) return b.empty_slots_count - a.empty_slots_count;
@@ -85,7 +88,10 @@ console.log('List unslotted properties Script by Gašper added');
             // console.log(`Property ${element.id} has ${element.empty_slots_count} empty slots. Slot it at https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}`);
         }
         totalJewelSlots += element.slots_count;
-        data += `${element.description.split(',').join('')},${element.tiles},${element.slots_count},${element.empty_slots_count},${element.efficency},"=HYPERLINK("https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}")"\r\n`;
+        data += `${element.description.split(',').join('')},${element.tiles},${element.slots_count},${element.empty_slots_count},${element.efficency},"=HYPERLINK("https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}")",${element.brilliants}\r\n`;
+        if (element.brilliants > 0) {
+            console.log(`Property ${element.id} has ${element.brilliants} brilliants. Check it at https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}`);
+        }
     }
 
     const metadata = `For properties with size ${T1_MIN_PROPERTY_SIZE}+ or more for T1 and ${T2_MIN_PROPERTY_SIZE}+ for T2\r\nThere is ${unslottedProps} unslotted properties and ${unefficient} properties with clashing jewel sloting\r\nThere is ${emptyJewelSlots} empty jewel slots out of ${totalJewelSlots} total jewel slots\r\n`;
