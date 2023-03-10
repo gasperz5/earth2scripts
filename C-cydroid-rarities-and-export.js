@@ -94,46 +94,44 @@ console.log('Cydroid rarities and export Script by Gašper added');
     final.sort(sortByRarity);
 
     let rarities = {
-        common: 0,
-        uncommon: 0,
-        rare: 0,
-        epic: 0,
-        legendary: 0,
-        built: 0
-
+        common: { count: 0, building: 0 },
+        uncommon: { count: 0, building: 0 },
+        rare: { count: 0, building: 0 },
+        epic: { count: 0, building: 0 },
+        legendary: { count: 0, building: 0 }
     }
+
+    let building = 0;
 
     for (let index = 0; index < final.length; index++) {
         const droid = final[index];
-        rarities[droid.rarity]++;
-        if (droid.built) {
-            rarities.built++;
+        rarities[droid.rarity].count++;
+        if (!droid.built) {
+            rarities[droid.rarity].building++;
+            building++;
         }
     }
-    let temp = `Common: ${rarities.common} (${(rarities.common / final.length * 100).toFixed(2)}%)`;
-    console.log(temp);
-    let info = temp+'\r\n';
-    temp = `Uncommon: ${rarities.uncommon} (${(rarities.uncommon / final.length * 100).toFixed(2)}%)`;
-    console.log(temp);
-    info += temp+'\r\n';
-    temp = `Epic: ${rarities.epic} (${(rarities.epic / final.length * 100).toFixed(2)}%)`;
-    console.log(temp);
-    info += temp+'\r\n';
-    temp = `Rare: ${rarities.rare} (${(rarities.rare / final.length * 100).toFixed(2)}%)`;
-    console.log(temp);
-    info += temp+'\r\n';
-    temp = `Legendary: ${rarities.legendary} (${(rarities.legendary / final.length * 100).toFixed(2)}%)`;
-    console.log(temp);
-    info += temp+'\r\n';
-    temp = `Built: ${rarities.built} (${(rarities.built / final.length * 100).toFixed(2)}%)`;
-    console.log(temp);
-    info += temp+'\r\n';
+    let stats = [];
+    const keys = Object.keys(rarities);
+    console.log('Rarity: Total (Building) | % built (% total)');
+    for (let index = 0; index < keys.length; index++) {
+        const key = keys[index];
+        console.log(`${key}: ${rarities[key].count} (${rarities[key].building} building)  | ${((rarities[key].count - rarities[key].building) / (final.length - building) * 100).toFixed(2)} % (${(rarities[key].count / final.length * 100).toFixed(2)}% total)`);
+        stats.push(`,,${key},${rarities[key].count},${rarities[key].count - rarities[key].building},${rarities[key].building},${((rarities[key].count - rarities[key].building) / (final.lengt - building) * 100).toFixed(2)}%,${(rarities[key].count / final.length * 100).toFixed(2)}%`);
+    }
+    stats.push(`,,Total,${final.length},${final.length - building},${building}`);
 
-    let csv = info+'Droid Id,Property Id,Name,Rarity,Appearance,Built\r\n'
+    let csv = 'Droid Id,Property Id,Name,Rarity,Appearance,Built,,Rarity,All,Built,Being Built,% built,% all\r\n'
 
     for (let index = 0; index < final.length; index++) {
         const droid = final[index];
-        csv += `${droid.droidId},${droid.propertyId},${droid.name},${droid.rarity},${droid.appearance},${droid.built}\r\n`;
+        csv += `${droid.droidId},${droid.propertyId},${droid.name},${droid.rarity},${droid.appearance},${droid.built}`;
+
+        if (index < stats.length) {
+            csv += stats[index];
+        }
+
+        csv += '\r\n';
     }
 
     createDownloadFile(csv, 'droids');
