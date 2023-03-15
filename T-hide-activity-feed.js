@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Hide Activity Feed
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  try to take over the world!
-// @author       GasperZ5GasperZ5 -- Gašper#9055
-// @match        https://app.earth2.io/
+// @author       GasperZ5-- Gašper#9055
+// @match        https://app.earth2.io
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=earth2.io
 // @support      https://www.buymeacoffee.com/gasper
 // ==/UserScript==
