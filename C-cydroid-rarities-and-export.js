@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Cydroids rarities and export
-// @version      0.1.0
+// @version      0.1.2
 // @description  Downloads a file containing all your droids and their rarities
 // @author       GasperZ5 -- Gašper#9055
 // @support      https://www.buymeacoffee.com/gasper
@@ -12,22 +12,24 @@ console.log('Cydroid rarities and export Script by Gašper added');
 
     let droidIds = [];
     let droids = [];
+    let landfieldNames = [];
     let pageCount = Infinity;
     let page = 1;
     let bitEnough = true;
 
     do {
-        console.log(`Getting page ${page}`);
+        console.log(`Getting droid page ${page}`);
         await grabPage(page)
             .then(responseData => {
                 data = JSON.parse(responseData);
                 for (let i = 0; i < data.data.length; i++) {
-                    const element = data.data[i].meta.droidIds;
-                    if (element.length === 0) {
+                    const element = data.data[i];
+                    if (element.meta.droidIds.length === 0) {
                         bitEnough = false;
                         break;
                     }
-                    droidIds.push(element);
+                    landfieldNames[element.id] = element.attributes.description.split(',').join('');
+                    droidIds.push(element.meta.droidIds);
                 }
                 pageCount = data.meta.pages;
             })
@@ -57,6 +59,7 @@ console.log('Cydroid rarities and export Script by Gašper added');
                 console.log('error on droid ids' + i);
             });
         await sleep(1000);
+        console.log(`Getting droids ${i+1} - ${i + 100}`);
     }
 
     let final = [];
@@ -68,7 +71,8 @@ console.log('Cydroid rarities and export Script by Gašper added');
             'name': droid.attributes.name,
             'rarity': droid.attributes.rarity,
             'appearance': droid.attributes.appearance,
-            'built': true
+            'built': true,
+            'state': droid.attributes.state
         };
         if (!one.rarity) {
             one.rarity = getRarityByAppearance(one.appearance);
@@ -102,6 +106,7 @@ console.log('Cydroid rarities and export Script by Gašper added');
     }
 
     let building = 0;
+    let depowered = 0;
 
     for (let index = 0; index < final.length; index++) {
         const droid = final[index];
@@ -109,6 +114,9 @@ console.log('Cydroid rarities and export Script by Gašper added');
         if (!droid.built) {
             rarities[droid.rarity].building++;
             building++;
+        }
+        if(droid.state === 'depowered'){
+            depowered++;
         }
     }
     let stats = [];
@@ -119,13 +127,14 @@ console.log('Cydroid rarities and export Script by Gašper added');
         console.log(`${key}: ${rarities[key].count} (${rarities[key].building} building)  | ${((rarities[key].count - rarities[key].building) / (final.length - building) * 100).toFixed(2)} % (${(rarities[key].count / final.length * 100).toFixed(2)}% total)`);
         stats.push(`,,${key},${rarities[key].count},${rarities[key].count - rarities[key].building},${rarities[key].building},${((rarities[key].count - rarities[key].building) / (final.length - building) * 100).toFixed(2)}%,${(rarities[key].count / final.length * 100).toFixed(2)}%`);
     }
+    console.log(`Depowered: ${depowered}`);
     stats.push(`,,Total,${final.length},${final.length - building},${building}`);
 
-    let csv = 'Droid Id,Property Id,Name,Rarity,Appearance,Built,,Rarity,All,Built,Being Built,% built,% all\r\n'
+    let csv = 'Droid Id,Property Id,Property Descripton,Name,Rarity,Appearance,Built,State,,Rarity,All,Built,Being Built,% built,% all\r\n'
 
     for (let index = 0; index < final.length; index++) {
         const droid = final[index];
-        csv += `${droid.droidId},${droid.propertyId},${droid.name},${droid.rarity},${droid.appearance},${droid.built}`;
+        csv += `${droid.droidId},${droid.propertyId},${landfieldNames[droid.propertyId]},${droid.name},${droid.rarity},${droid.appearance},${droid.built},${droid.state}`;
 
         if (index < stats.length) {
             csv += stats[index];
@@ -227,7 +236,7 @@ console.log('Cydroid rarities and export Script by Gašper added');
             return 'legendary';
         }
         return 'undefined';
-    }
+    }   
 
 
 
