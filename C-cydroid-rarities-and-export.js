@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Cydroids rarities and export
-// @version      0.1.2
+// @version      0.1.3
 // @description  Downloads a file containing all your droids and their rarities
 // @author       GasperZ5 -- Gašper#9055
 // @support      https://www.buymeacoffee.com/gasper
@@ -72,7 +72,8 @@ console.log('Cydroid rarities and export Script by Gašper added');
             'rarity': droid.attributes.rarity,
             'appearance': droid.attributes.appearance,
             'built': true,
-            'state': droid.attributes.state
+            'state': droid.attributes.state,
+            'storage': droid.attributes.storage,
         };
         if (!one.rarity) {
             one.rarity = getRarityByAppearance(one.appearance);
@@ -107,6 +108,7 @@ console.log('Cydroid rarities and export Script by Gašper added');
 
     let building = 0;
     let depowered = 0;
+    let etherDispensing = 0;
 
     for (let index = 0; index < final.length; index++) {
         const droid = final[index];
@@ -117,6 +119,10 @@ console.log('Cydroid rarities and export Script by Gašper added');
         }
         if(droid.state === 'depowered'){
             depowered++;
+        }
+        if(droid.state === 'dispensing'){
+            console.log(droid);
+            etherDispensing+=droid.storage;
         }
     }
     let stats = [];
@@ -129,12 +135,14 @@ console.log('Cydroid rarities and export Script by Gašper added');
     }
     console.log(`Depowered: ${depowered}`);
     stats.push(`,,Total,${final.length},${final.length - building},${building}`);
+    console.log(`Ether Dispensing: ${etherDispensing}`);
+    stats.push(`,,Ether Dispensing,${etherDispensing}`);
 
-    let csv = 'Droid Id,Property Id,Property Descripton,Name,Rarity,Appearance,Built,State,,Rarity,All,Built,Being Built,% built,% all\r\n'
+    let csv = 'Droid Id,Property Id,Property Descripton,Name,Rarity,Appearance,Built,State,Storage,,Rarity,All,Built,Being Built,% built,% all\r\n'
 
     for (let index = 0; index < final.length; index++) {
         const droid = final[index];
-        csv += `${droid.droidId},${droid.propertyId},${landfieldNames[droid.propertyId]},${droid.name},${droid.rarity},${droid.appearance},${droid.built},${droid.state}`;
+        csv += `${droid.droidId},${droid.propertyId},${landfieldNames[droid.propertyId]},${droid.name},${droid.rarity},${droid.appearance},${droid.built},${droid.state},${droid.storage}`;
 
         if (index < stats.length) {
             csv += stats[index];
