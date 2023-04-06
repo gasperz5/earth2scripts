@@ -138,7 +138,7 @@ console.log('Cydroid rarities and export Script by Gašper added');
     stats.push(`,,Total,${final.length},${final.length - building},${building}`);
     console.log(`Ether Dispensing: ${etherDispensing}`);
     stats.push(`,,Ether Dispensing,${etherDispensing}`);
-    console.log(',,States:');
+    console.log('States:');
     for (const key in states) {
         console.log(`${key}: ${states[key]}`);
         stats.push(`,,${key},${states[key]}`);
