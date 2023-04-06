@@ -107,7 +107,7 @@ console.log('Cydroid rarities and export Script by Gašper added');
     }
 
     let building = 0;
-    let depowered = 0;
+    let states = {};
     let etherDispensing = 0;
 
     for (let index = 0; index < final.length; index++) {
@@ -117,26 +117,35 @@ console.log('Cydroid rarities and export Script by Gašper added');
             rarities[droid.rarity].building++;
             building++;
         }
-        if(droid.state === 'depowered'){
-            depowered++;
+        if(!states[droid.state]){
+            states[droid.state] = 1;
+        }
+        else{
+            states[droid.state]++;
         }
         if(droid.state === 'dispensing'){
-            console.log(droid);
             etherDispensing+=droid.storage;
         }
     }
     let stats = [];
     const keys = Object.keys(rarities);
-    console.log('Rarity: Total (Building) | % built (% total)');
+    console.log(`Rarity: Total ${final.length} (Building) | % built (% total)`);
     for (let index = 0; index < keys.length; index++) {
         const key = keys[index];
         console.log(`${key}: ${rarities[key].count} (${rarities[key].building} building)  | ${((rarities[key].count - rarities[key].building) / (final.length - building) * 100).toFixed(2)} % (${(rarities[key].count / final.length * 100).toFixed(2)}% total)`);
         stats.push(`,,${key},${rarities[key].count},${rarities[key].count - rarities[key].building},${rarities[key].building},${((rarities[key].count - rarities[key].building) / (final.length - building) * 100).toFixed(2)}%,${(rarities[key].count / final.length * 100).toFixed(2)}%`);
     }
-    console.log(`Depowered: ${depowered}`);
     stats.push(`,,Total,${final.length},${final.length - building},${building}`);
     console.log(`Ether Dispensing: ${etherDispensing}`);
     stats.push(`,,Ether Dispensing,${etherDispensing}`);
+    console.log(',,States:');
+    for (const key in states) {
+        console.log(`${key}: ${states[key]}`);
+        stats.push(`,,${key},${states[key]}`);
+    }
+    if (!stats['depowered']) {
+        console.log(`depowered: 0`);
+    }
 
     let csv = 'Droid Id,Property Id,Property Descripton,Name,Rarity,Appearance,Built,State,Storage,,Rarity,All,Built,Being Built,% built,% all\r\n'
 
