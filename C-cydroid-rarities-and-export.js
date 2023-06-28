@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Cydroids rarities and export
-// @version      0.1.3
+// @version      0.1.4
 // @description  Downloads a file containing all your droids and their rarities
 // @author       GasperZ5 -- Gašper#9055
 // @support      https://www.buymeacoffee.com/gasper
@@ -127,6 +127,7 @@ console.log('Cydroid rarities and export Script by Gašper added');
             etherDispensing+=droid.storage;
         }
     }
+    etherDispensing = etherDispensing.toFixed(2);
     let stats = [];
     const keys = Object.keys(rarities);
     console.log(`Rarity: Total ${final.length} (Building) | % built (% total)`);
