@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         List unslotted properties
-// @version      0.3.2
+// @version      0.3.4
 // @description  Downloads a file containing all your properties that are not fully slotted or slotted with jewels clashing
 // @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
 // @support      https://www.buymeacoffee.com/gasper
@@ -23,28 +23,29 @@ console.log('List unslotted properties Script by Gašper added');
         await grabPage(page)
             .then(responseData => {
                 const data = JSON.parse(responseData);
-                for (let i = 0; i < data.results.length; i++) {
-                    const element = data.results[i];
+                console.log(data);
+                for (let i = 0; i < data.data.length; i++) {
+                    const element = data.data[i];
 
 
                     let efficency = 1;
                     let brilliants = 0;
-                    element.slotted_jewel_set.forEach(e => {
-                        if (e.quality_level == 'BRILLIANT') brilliants++;
-                        efficency *= e.effect_strength_coefficient;
+                    element.attributes.jewels.data.forEach(e => {
+                        if (e.attributes.qualityLevel == 'BRILLIANT') brilliants++;
+                        efficency *= e.attributes.effectStrengthCoefficient;
                     });
                     properties.push({
-                        id: element.landfield_id,
-                        tiles: element.tiles_count,
-                        description: element.description,
-                        slots_count: element.slots_count,
-                        empty_slots_count: element.slots_count - element.slotted_jewel_set.length,
+                        id: element.id,
+                        tiles: element.attributes.tilesCount,
+                        description: element.attributes.description,
+                        slots_count: element.attributes.slotsCount,
+                        empty_slots_count: element.attributes.slotsCount - element.attributes.jewels.data.length,
                         efficency: efficency,
                         brilliants: brilliants,
-                        tier: element.landfield_tier,
+                        tier: element.attributes.landfieldTier,
                     });
                 }
-                count = data.count;
+                count = data.meta.count;
             })
             .catch(err => {
                 console.log(err);
@@ -52,11 +53,11 @@ console.log('List unslotted properties Script by Gašper added');
                 console.log('canceling');
                 return;
             });
-        console.log(`Got page ${page} of ${Math.floor(count / 100)}`);
+        console.log(`Got page ${page} of ${Math.floor(count / 20)}`);
         page++;
         await sleep(1000);
 
-    } while (count > page * 100);
+    } while (count > page * 20);
 
     let unefficient = 0;
     let unslottedProps = 0;
@@ -88,7 +89,7 @@ console.log('List unslotted properties Script by Gašper added');
             // console.log(`Property ${element.id} has ${element.empty_slots_count} empty slots. Slot it at https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}`);
         }
         totalJewelSlots += element.slots_count;
-        data += `${element.description.split(',').join('')},${element.tiles},${element.slots_count},${element.empty_slots_count},${element.efficency},"=HYPERLINK("https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}")",${element.brilliants}\r\n`;
+        data += `${element.description.split(',').join('')},${element.tiles},${element.slots_count},${element.empty_slots_count},${parseFloat(element.efficency).toFixed(2)},"=HYPERLINK("https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}")",${element.brilliants}\r\n`;
         if (element.brilliants > 0) {
             console.log(`Property ${element.id} has ${element.brilliants} brilliants. Check it at https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}`);
         }
@@ -101,7 +102,7 @@ console.log('List unslotted properties Script by Gašper added');
     async function grabPage(page) {
         const promise = new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', `https://app.earth2.io/api/v2/my/mentars/?ordering=-tiles_count,id&search=&limit=100&offset=${(page - 1) * 100}`);
+            xhr.open('GET', `https://r.earth2.io/mentars/?page=${page}&perPage=20&sortBy=tiles_count&sortDir=desc`);
             xhr.setRequestHeader('accept', 'application/json, text/plain, */*');
             xhr.setRequestHeader('x-csrftoken', document.querySelector('[name="csrfmiddlewaretoken"]').value);
             xhr.withCredentials = true;
