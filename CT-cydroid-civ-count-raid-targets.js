@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Displays the number of droids and civilians on the raid target
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.2
 // @description  Checks if there are any droids and civilians on the property displays their count
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -74,9 +74,8 @@
                 td2.innerHTML = land.numberOfCivilians;
                 td2.classList.add('text-sm');
                 element.appendChild(td2);
-                i++;
             }
-
+            i++;
         }
     }
 
