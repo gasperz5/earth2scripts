@@ -1,120 +1,97 @@
-// ==UserScript==
-// @name         Raid ready droid counter
-// @version      0.1.4
-// @description  Calculates the number of raid ready cydroids you can support
-// @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
-// @support      https://www.buymeacoffee.com/gasper
-// ==/UserScript==
+    // ==UserScript==
+    // @name         Raid ready droid counter
+    // @version      0.2
+    // @description  Calculates the number of raid ready cydroids you can support
+    // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
+    // @support      https://www.buymeacoffee.com/gasper
+    // ==/UserScript==
 
-console.log('Raid ready cydroid counter Script by Gašper added');
+    console.log('Raid ready cydroid counter Script by Gašper added');
 
 
-(async function () {
+    (async function () {
 
-    let id;
-    try { id = auth0user.id } catch (error) {
-        console.log('You need to be logged in to use this script');
-        return;
-    }
+        let PROFILE_ID = null; // Set this to a custom profile id if you want to check for a different profile
+        if (PROFILE_ID == null) {
+            try { PROFILE_ID = auth0user.id } catch (error) {
+                console.log('You need to be logged in to use this script');
+                return;
+            }
+        }
+        let react = document.getElementsByClassName('app antialiased Layout')[0][Object.keys(document.getElementsByClassName('app antialiased Layout')[0])[0]].return.dependencies.firstContext.context._currentValue;
+        let properties = await getAllProperties();
 
-    let properties = [];
-    let pageCount = Infinity;
-    let page = 1;
-    let bitEnough = true;
+        const file = await getCydroidCount(properties);
+        createDownloadFile(file, 'raid-ready-cydroids');
 
-    do {
-        console.log(`Getting page ${page}`);
-        await grabPage(id, page)
-            .then(responseData => {
-                const data = JSON.parse(responseData);
-                for (let i = 0; i < data.data.length; i++) {
-                    const element = data.data[i];
-                    if (element.attributes.tileCount < 4) {
-                        bitEnough = false;
-                        break;
-                    }
-                    properties.push(element);
-                }
-                pageCount = data.meta.count;
-            })
-            .catch(err => {
-                console.log(err);
-                console.log('error on page ' + page);
+        async function getAllProperties() {
+            let perPage = 1000;
+            let page = 1;
+
+            let properties = [];
+            let maxErrorCount = 10;
+            let data = await react.api.getUserLandfields({ page: page, perPage: perPage, userId: PROFILE_ID, sort: '-size'}).catch(e => {
+                console.log('Error fetching properties', e);
+                page--;
+                maxErrorCount--;
+                return { data: [], meta: { count: 0 } };
             });
-        page++;
-        await sleep(1000);
 
-    } while (pageCount > page * 60 && bitEnough);
-
-    const file = await getCydroidCount(properties);
-    createDownloadFile(file, 'raid-ready-cydroids');
-
-
-    async function grabPage(id, page) {
-        const promise = new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', `https://r.earth2.io/landfields?items=60&page=${page}&search=&sort=-size&userId=${id}`);
-            xhr.setRequestHeader('accept', 'application/json, text/plain, */*');
-            xhr.setRequestHeader('x-csrftoken', document.querySelector('[name="csrfmiddlewaretoken"]').value);
-            xhr.withCredentials = true;
-            xhr.onload = () => {
-                if (xhr.status >= 400) {
-                    reject(xhr.response);
-                } else {
-                    resolve(xhr.response);
+            while (data.data.length > 0) {
+                await sleep(1000);
+                console.log(`Page ${page} / ${Math.ceil(data.meta.count / perPage)} done`);
+                properties = properties.concat(data.data);
+                page++;
+                data = await react.api.getUserLandfields({ page: page, perPage: perPage, userId: PROFILE_ID, sort: '-size' }).catch(e => {
+                    console.log('Error fetching properties', e);
+                    maxErrorCount--;
+                    page--;
+                    return { data: [], meta: { count: 0 } };
+                });
+                if (maxErrorCount === 0) {
+                    console.log('Max error count reached');
+                    break;
                 }
-            };
-            xhr.onerror = () => {
-                reject('Something went wrong!');
-            };
-            xhr.send();
-        });
-        return promise;
-    };
-
-    async function getCydroidCount(properties) {
-        let count = 0;
-        let countLeaked = 0;
-        let data = 'Cyroid Count, Tile Count, Description, Link\r\n';
-        for (let i = 0; i < properties.length; i++) {
-            const element = properties[i];
-            const tileCount = element.attributes.tileCount;
-            const cydroidCount = maxCydroidPerProperty(tileCount);
-            const cydroidCountLeaked = maxCydroidPerPropertyLeaked(tileCount);
-            count += cydroidCount;
-            countLeaked += cydroidCountLeaked;
-            data += `${cydroidCount},${tileCount},${element.attributes.description.split(',').join('')},"=HYPERLINK("https://app.earth2.io/#propertyInfo/${element.id}")"\r\n`;
-            // console.log(`${cydroidCount} raid ready cydroids are supported on the property ${element.attributes.description} with ${tileCount} tiles: https://app.earth2.io/#propertyInfo/${element.id}`);
+            }
+            return properties;
         }
-        console.log('Properties with less that 4 tiles skipped as they support 0 raid ready cydroids');
-        console.log(`In total you can support ${count} raid ready cydroids (Deep Dive Raiding Video and Stage 2 Website)`);
-        console.log(`In total you can support ${countLeaked} raid ready cydroids (leaked image removed from the news article)`);
-        console.log('This may change over time as E2 plans evolve');
-        return `,Properties with less that 4 tiles skipped as they support 0 raid ready cydroids\r\n,In total you can support ${count} raid ready cydroids (Deep Dive Raiding Video and Stage 2 Website)\r\n,In total you can support ${countLeaked} raid ready cydroids (leaked image removed from the news article)\r\n,This may change over time as E2 plans evolve\r\n\r\n` + data;
-    }
 
-    function maxCydroidPerProperty(tiles) {
-        return tiles >= 4 ? tiles >= 10 ? tiles >= 30 ? tiles >= 60 ? tiles >= 100 ? tiles >= 200 ? tiles >= 325 ? tiles >= 475 ? tiles >= 650 ? tiles >= 750 ? 10 : 9 : 8 : 7 : 6 : 5 : 4 : 3 : 2 : 1 : 0;
-    }
-    function maxCydroidPerPropertyLeaked(tiles) {
-        return tiles >= 4 ? tiles >= 10 ? tiles >= 30 ? tiles >= 750 ? 10 : parseInt(tiles / 10) : 2 : 1 : 0;
-    }
-
-    async function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function createDownloadFile(content, prefix) {
-        let link = document.createElement('a');
-        link.download = `${prefix}.csv`;
-        let blob = new File(["\uFEFF" + content], { type: 'text/csv;charset=utf-8' });
-        let file = new File([blob], link.download);
-        link.href = window.URL.createObjectURL(file);
-        if (confirm('Download the file?')) {
-            link.click()
-            console.log(`Downloaded file ${prefix}.csv`);
-        } else {
-            console.log(`File ${prefix}.csv not downloaded`);
+        async function getCydroidCount(properties) {
+            let count = 0;
+            let data = 'Cyroid Count, Tile Count, Description, Link\r\n';
+            for (let i = 0; i < properties.length; i++) {
+                const element = properties[i];
+                const tileCount = element.attributes.tileCount;
+                const cydroidCount = maxCydroidPerProperty(tileCount);
+                count += cydroidCount;
+                data += `${cydroidCount},${tileCount},${element.attributes.description.split(',').join('')},"=HYPERLINK("https://app.earth2.io/#propertyInfo/${element.id}")"\r\n`;
+                console.log(`${cydroidCount} raid ready cydroids are supported on the property ${element.attributes.description} with ${tileCount} tiles: https://app.earth2.io/#propertyInfo/${element.id}`);
+            }
+            console.log('Properties with less that 4 tiles skipped as they support 0 raid ready cydroids');
+            console.log(`In total you can support ${count} raid ready cydroids (Deep Dive Raiding Video and Stage 2 Website)`);
+            console.log('This may change over time as E2 plans evolve');
+            return `,Properties with less that 4 tiles skipped as they support 0 raid ready cydroids\r\n,In total you can support ${count} raid ready cydroids (Deep Dive Raiding Video and Stage 2 Website)\r\n,This may change over time as E2 plans evolve\r\n\r\n` + data;
         }
-    };
-})();
+
+        function maxCydroidPerProperty(tiles) {
+            return tiles >= 4 ? tiles >= 10 ? tiles >= 30 ? tiles >= 60 ? tiles >= 100 ? tiles >= 200 ? tiles >= 325 ? tiles >= 475 ? tiles >= 650 ? tiles >= 750 ? 10 : 9 : 8 : 7 : 6 : 5 : 4 : 3 : 2 : 1 : 0;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function createDownloadFile(content, prefix) {
+            let link = document.createElement('a');
+            link.download = `${prefix}.csv`;
+            let blob = new File(["\uFEFF" + content], { type: 'text/csv;charset=utf-8' });
+            let file = new File([blob], link.download);
+            link.href = window.URL.createObjectURL(file);
+            if (confirm('Download the file?')) {
+                link.click()
+                console.log(`Downloaded file ${prefix}.csv`);
+            } else {
+                console.log(`File ${prefix}.csv not downloaded`);
+            }
+        };
+    })();
