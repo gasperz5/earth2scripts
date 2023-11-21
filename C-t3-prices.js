@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         T3 territory prices
-// @version      0.1.0
+// @version      0.1.1
 // @description  Displays the prices of open T3 territories
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -73,8 +73,12 @@
     function displayTerritoryInfo() {
         territories.sort((a, b) => b.price - a.price);
         territories.forEach(t =>
-            console.log(`${t.id} - ${t.attributes.territoryName}, ${t.attributes.countryName} - E$${t.price} per Tile, ${react.appStore.url}/?lat=${t.attributes.center[1]}&lng=${t.attributes.center[0]}#`)
+            console.log(`${t.id} - ${t.attributes.territoryName}, ${t.attributes.countryName} - E$${t.price} per Tile ~ ${aproximateTileCount(t.price)} Tiles, ${react.appStore.url}/?lat=${t.attributes.center[1]}&lng=${t.attributes.center[0]}#`)
         );
+    }
+
+    function aproximateTileCount(price) {
+        return parseInt(150000 * Math.log(price * 10));
     }
 
     function logProgress(index) {
