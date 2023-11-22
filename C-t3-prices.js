@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         T3 territory prices
-// @version      0.1.1
+// @version      0.1.2
 // @description  Displays the prices of open T3 territories
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -10,7 +10,7 @@
     'use strict';
     
     const ZOOM = 21; // Do not change this, it's hardcoded to 21 in E2 to represent tiles on the map
-    const MAX_TERRITORIES = 100; // Maximum number of territories to get prices for
+    const MAX_TERRITORIES = 1000; // Maximum number of territories to get prices for
     const SLEEP_BASE = 250;
     const SLEEP_INTERVAL = 1000;
     
@@ -30,7 +30,8 @@
 
     territories = territories.slice(0, MAX_TERRITORIES);
     console.log(`Checking for ${territories.length} T3 territories`);
-    await calculatePrices();
+    await getAllPrices();
+    await calculateRemainingPrices();
     displayTerritoryInfo();
 
     console.log('Finished getting T3 prices');
@@ -61,11 +62,24 @@
         return territories;
     }
 
-    async function calculatePrices() {
+    async function getAllPrices() {
+        console.log('Getting prices for T3 territories that have already been sold');
+        let data = (await react.api.fetchCountries()).data.filter((t) => t.attributes.landfieldTier == 3);
+        for (let i = 0; i < data.length; i++) {
+            if (territories.filter(t => t.attributes.country === data[i].id).length != 1) continue;
+            let index = territories.findIndex(t => t.attributes.country === data[i].id);
+            territories[index].tileCount = data[i].attributes.totalTilesSold;
+            territories[index].price = approximatePrice(data[i].attributes.totalTilesSold);          
+        }
+    }
+
+    async function calculateRemainingPrices() {
         for (let i = 0; i < territories.length; i++) {
-            logProgress(i);
+            if (territories[i].price) continue;
+            logProgress(i+1);
             const tileId = lngLatToQuadkeyCompress(territories[i].attributes.center, ZOOM);
             territories[i].price = (await react.api.calculatePrice({ tileId, landfieldTier: 3 })).final;
+            territories[i].tileCount = approximateTileCount(territories[i].price);
             await sleep(SLEEP_BASE + (i % 10 === 0 ? SLEEP_INTERVAL : 0));
         }
     }
@@ -73,18 +87,20 @@
     function displayTerritoryInfo() {
         territories.sort((a, b) => b.price - a.price);
         territories.forEach(t =>
-            console.log(`${t.id} - ${t.attributes.territoryName}, ${t.attributes.countryName} - E$${t.price} per Tile ~ ${aproximateTileCount(t.price)} Tiles, ${react.appStore.url}/?lat=${t.attributes.center[1]}&lng=${t.attributes.center[0]}#`)
+            console.log(`${t.id} - ${t.attributes.territoryName}, ${t.attributes.countryName} - E$${t.price} per Tile ~ ${t.tileCount} Tiles, ${react.appStore.url}/?lat=${t.attributes.center[1]}&lng=${t.attributes.center[0]}#`)
         );
     }
 
-    function aproximateTileCount(price) {
+    function approximateTileCount(price) {
         return parseInt(150000 * Math.log(price * 10));
     }
 
+    function approximatePrice(tileCount) {
+        return (Math.exp(tileCount / 150000) / 10).toFixed(3);
+    }
+
     function logProgress(index) {
-        if (index % 10 === 0) {
-            console.log(`Calculating price for territory #${index}`);
-        }
+        console.log(`Calculating price for territory #${index}`);
     }
 
     function lngLatToQuadkeyCompress([lng, lat], zoom) {
