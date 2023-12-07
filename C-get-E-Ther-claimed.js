@@ -156,13 +156,13 @@
         if (confirm('Do you want to download the CSV file with the transactions?')) {
             let csv = 'Location,Tier,Tile Count,Ammount,Link\n';
             t1.forEach(el => {
-                csv += `${el.landfield.location.split(',').join('')},1,${el.landfield.tileCount},${el.amount.toFixed(2)},"=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")"\n`;
+                csv += `${el.landfield.location.split(',').join('')},1,${el.landfield.tileCount},${el.amount.toFixed(2)},=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")\n`;
             });
             t2.forEach(el => {
-                csv += `${el.landfield.location.split(',').join('')},2,${el.landfield.tileCount},${el.amount.toFixed(2)},"=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")"\n`;
+                csv += `${el.landfield.location.split(',').join('')},2,${el.landfield.tileCount},${el.amount.toFixed(2)},=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")\n`;
             });
             t3.forEach(el => {
-                csv += `${el.landfield.location.split(',').join('')},3,${el.landfield.tileCount},${el.amount.toFixed(2)},"=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")"\n`;
+                csv += `${el.landfield.location.split(',').join('')},3,${el.landfield.tileCount},${el.amount.toFixed(2)},=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")\n`;
             });
             createDownloadFile(csv, 'E-Ther-claimed');
         }
