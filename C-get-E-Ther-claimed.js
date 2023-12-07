@@ -147,7 +147,9 @@
     }
 
     function logTotalByTier(landfields, tier) {
-        console.log('E-ther from tier', tier, ':', landfields.reduce((a, b) => a + parseFloat(b.amount), 0).toFixed(2));
+        let totalAmount = landfields.reduce((a, b) => a + parseFloat(b.amount), 0);
+        let totalTileCount = landfields.reduce((a, b) => a + parseInt(b.landfield.tileCount), 0);
+        console.log(`Total E-ther from tier ${tier}: ${totalAmount.toFixed(2)} for ${totalTileCount} tiles, average: ${(totalAmount / totalTileCount).toFixed(2)} per tile`);
     }
 
     function donwloadCSV(t1, t2, t3) {
