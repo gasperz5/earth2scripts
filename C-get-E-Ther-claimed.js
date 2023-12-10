@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Get E-Ther claimed
-// @version      0.1.1
+// @version      0.1.2
 // @description  Get E-Ther claim transactions for E2 and export them to CSV file
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -20,7 +20,7 @@
         return;
     }
 
-    const DAYS_FOR_TRANSACTIONS = 1;
+    const HOURS_FOR_TRANSACTIONS = 10;
     const ITEMS = 100;
     const TICKER = 'ETHR';
     const TYPE = 'GENERATED_RESOURCE_CLAIM';
@@ -28,7 +28,7 @@
     const react = getReactInstance();
 
     let includedProps = {};
-    let transactions = await getTransactionsForDays(DAYS_FOR_TRANSACTIONS);
+    let transactions = await getTransactionsForDays(HOURS_FOR_TRANSACTIONS);
 
     localStorage.setItem('transactions', JSON.stringify(transactions));
     localStorage.setItem('includedProps', JSON.stringify(includedProps));
@@ -71,15 +71,15 @@
         return res;
     }
 
-    async function getTransactionsForDays(days) {
-        console.log(`Getting transactions for the last ${days * 24} hours`);
+    async function getTransactionsForDays(hours) {
+        console.log(`Getting transactions for the last ${hours} hours`);
 
         const pageSize = 100;
         let page = 1;
         let pageCount = 1;
         let transactions = [];
         let end_date = new Date();
-        end_date.setDate(end_date.getDate() - days);
+        end_date.setDate(end_date.getDate() - hours / 24);
 
         while (page <= pageCount) {
 
