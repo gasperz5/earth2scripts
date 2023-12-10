@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Get E-Ther claimed
-// @version      0.1.2
+// @version      0.1.3
 // @description  Get E-Ther claim transactions for E2 and export them to CSV file
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -79,7 +79,7 @@
         let pageCount = 1;
         let transactions = [];
         let end_date = new Date();
-        end_date.setDate(end_date.getDate() - hours / 24);
+        end_date.setHours(end_date.getHours() - hours);
 
         while (page <= pageCount) {
 
