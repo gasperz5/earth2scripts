@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         T3 territory prices
-// @version      0.1.2
+// @version      0.1.3
 // @description  Displays the prices of open T3 territories
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -76,7 +76,7 @@
     async function calculateRemainingPrices() {
         for (let i = 0; i < territories.length; i++) {
             if (territories[i].price) continue;
-            logProgress(i+1);
+            logProgress(i+1, territories[i].attributes);
             const tileId = lngLatToQuadkeyCompress(territories[i].attributes.center, ZOOM);
             territories[i].price = (await react.api.calculatePrice({ tileId, landfieldTier: 3 })).final;
             territories[i].tileCount = approximateTileCount(territories[i].price);
@@ -99,8 +99,8 @@
         return (Math.exp(tileCount / 150000) / 10).toFixed(3);
     }
 
-    function logProgress(index) {
-        console.log(`Calculating price for territory #${index}`);
+    function logProgress(index, attributes) {
+        console.log(`Calculating price for territory #${index}, ${attributes.territoryName}, ${attributes.countryName}`);
     }
 
     function lngLatToQuadkeyCompress([lng, lat], zoom) {
