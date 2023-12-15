@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Chance for a brilliant
-// @version      0.2.0
+// @version      0.3.0
 // @description  Uses leaderboard's data to calculate the chance for a brilliant
-// @author       GasperZ5 -- Gašper#9055 -- 41NFAM269W
+// @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
 // ==/UserScript==
 
@@ -10,12 +10,15 @@ console.log('Chance for a brilliant Script by Gašper added');
 
 
 (async function () {
+    'use strict';
     const jewelTypes = ['LUMINOUS', 'BRILLIANT'];
+
+    const react = getReactInstance();
+
     let results = {};
     for (let i = 0; i < jewelTypes.length; i++) {
         const jewelType = jewelTypes[i];
-        const query = await getQuery(jewelType);
-        const count = await getCount(query);
+        const count = await getCount(jewelType);
         console.log(`${jewelType} - ${count}`);
         results[jewelType] = count;
     }
@@ -26,34 +29,26 @@ console.log('Chance for a brilliant Script by Gašper added');
     if (readLocalStorage('GASPERZ5_JEWELS') != null) {
         diffrenceBetweenLastRun(readLocalStorage('GASPERZ5_JEWELS'), brilliantCount, luminousCount);
     }
-    writeLocalStorage('GASPERZ5_JEWELS', { 'BRILLIANT': brilliantCount, 'LUMINOUS': luminousCount , 'DATE': new Date().toJSON().slice(0,10)});
+    writeLocalStorage('GASPERZ5_JEWELS', { 'BRILLIANT': brilliantCount, 'LUMINOUS': luminousCount, 'DATE': new Date().toJSON().slice(0, 10) });
 
-
-    async function getQuery(jewelType) {
-        return `https://r.earth2.io/leaderboards/player_continents?sort_by=hq_jewels_count&jewel_quality=${jewelType}`;
+    async function getCount(jewel_quality) {
+        const data = await react.api.getLeaderboards({ kindBy: 'player_continents', sortBy: 'hq_jewels_count', filters: { jewel_quality: jewel_quality } });
+        let total = 0;
+        for (let index = 0; index < data?.data?.length; index++) {
+            total += parseInt(data.data[index].attributes.value);
+        }
+        return total;
     }
 
-    async function getCount(query) {
-        return await fetch(query)
-            .then(res => res.json())
-            .then(r => {
-                let total = 0;
-                for (let index = 0; index < r.data.length; index++) {
-                    total += parseInt(r.data[index].attributes.value);
-                }
-                return total;
-            })
-            .catch(err => {
-                console.log(err)
-            });
-    }
     function readLocalStorage(key) {
         return JSON.parse(localStorage.getItem(key));
     }
+
     function writeLocalStorage(key, value) {
         localStorage.setItem
             (key, JSON.stringify(value));
     }
+
     function diffrenceBetweenLastRun(last, brilliantCount, luminousCount) {
         const brilliantDiffrence = brilliantCount - last['BRILLIANT'];
         const luminousDiffrence = luminousCount - last['LUMINOUS'];
@@ -62,5 +57,9 @@ console.log('Chance for a brilliant Script by Gašper added');
             const chanceDiffrence = parseInt((luminousDiffrence + brilliantDiffrence) / brilliantDiffrence);
             console.log(`New chance to craft a brilliant is 1 in ${chanceDiffrence}`);
         }
+    }
+
+    function getReactInstance() {
+        return Object.values(document.querySelector('.app'))[0].return.dependencies.firstContext.context._currentValue;
     }
 })();
