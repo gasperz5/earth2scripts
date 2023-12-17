@@ -20,4 +20,4 @@ You can use the [console](https://github.com/gasperz5/earth2scripts#for-scripts-
 
 Support me by buying me a coffee ☕ [here](https://www.buymeacoffee.com/gasper) or by using my referral code **gasper** when buying T1 or T2 land on [app.earth2.io](https://app.earth2.io/).
 
-##### Depreciated Scripts (no longer working of replaced by website features) in [deprecated](https://github.com/gasperz5/earth2scripts/tree/master/depreciated) folder.
+##### Depreciated Scripts (no longer working of replaced by website features) in [deprecated](https://github.com/gasperz5/earth2scripts/tree/main/depreciated) folder.

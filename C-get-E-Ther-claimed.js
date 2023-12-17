@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Get E-Ther claimed
-// @version      0.1.4
+// @version      0.1.5
 // @description  Get E-Ther claim transactions for E2 and export them to CSV file
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -182,7 +182,7 @@
         }
     }
 
-    async function createDownloadFile(content, prefix) {
+    function createDownloadFile(content, prefix) {
         let link = document.createElement('a');
         link.download = `${prefix}.csv`;
         let blob = new File(["\uFEFF" + content], { type: 'text/csv;charset=utf-8' });

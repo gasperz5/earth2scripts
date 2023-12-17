@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Mentar Slotting Exporter
-// @version      0.4.0
+// @version      0.4.1
 // @description  Downloads a file containing all your mentars and their slotting efficency and empty slots count (and brilliants count)
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -28,7 +28,7 @@ console.log('Mentar Slotting Exporter Script by Gašper added');
 
     do {
         const { data, meta } = await grabPage(page);
-        if (data.length === 0) {
+        if (meta.error) {
             if (error_count > MAX_ERROR_COUNT) {
                 console.log(`Page ${page} / ${pageCount} encountered an error - stopping`);
                 break;
@@ -109,7 +109,7 @@ console.log('Mentar Slotting Exporter Script by Gašper added');
 
     async function grabPage(page) {
         let res = await react.api.getMyMentars({ page: page, perPage: PER_PAGE, sortBy: 'tiles_count', sortDir: 'desc' });
-        return res || { data: [], meta: {} };
+        return res || { data: [], meta: {error:true} };
     };
 
     function sleep(ms) {

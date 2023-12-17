@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Displays the number of droids, civilians and the tier on the raid target
+// @name         Cydroid Civilian Count Script
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
-// @description  Checks if there are any droids and civilians on the property displays their count and the tier of the property
+// @version      0.1.4
+// @description  Checks if there are any droids and civilians on the property, displays their count and the tier of the property
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
 // @include      https://*app.earth2.io/
@@ -33,7 +33,7 @@
         style.innerHTML = '.styles_menu__8fRGE {    width: 750px; }';
         document.head.appendChild(style);
 
-        react = document.getElementsByClassName('app antialiased Layout')[0][Object.keys(document.getElementsByClassName('app antialiased Layout')[0])[0]].return.dependencies.firstContext.context._currentValue;
+        react = getReactInstance();
         setInterval(checker, 100);
     }
     async function checker() {
@@ -46,7 +46,7 @@
         if (myMap == lastMap) return;
         lastMap = myMap;
 
-        let head = document.querySelector("#main-menu > div > div:nth-child(1) > div:nth-child(3) > div > div.customScrollBar.h-full.overflow-y-auto > div.divide-base-900.divide-y-2 > div.duration-300.ease-in-out.transition-colors.bg-base-800 > div.overflow-hidden > div.relative > div > div:nth-child(8) > div > table > thead > tr");
+        let head = document.querySelector("#main-menu > div > div > div:nth-child(3) > div > div.customScrollBar.h-full.overflow-y-auto > div.divide-base-900.divide-y-2 > div.duration-300.ease-in-out.transition-colors.bg-base-800 > div.overflow-hidden > div.relative > div > div:nth-child(9) > div > table > thead > tr");
         if (head == null) return;
         if (head.children.length < 7) {
             let th1 = document.createElement('th');
@@ -67,7 +67,7 @@
         let i = 1;
         for (const [key, value] of myMap) {
             let land = value.value_;
-            let element = document.querySelector("#main-menu > div > div > div:nth-child(3) > div > div.customScrollBar.h-full.overflow-y-auto > div.divide-base-900.divide-y-2 > div.duration-300.ease-in-out.transition-colors.bg-base-800 > div.overflow-hidden > div.relative > div > div:nth-child(8) > div > table > tbody > tr:nth-child(" + i + ")");
+            let element = document.querySelector("#main-menu > div > div > div:nth-child(3) > div > div.customScrollBar.h-full.overflow-y-auto > div.divide-base-900.divide-y-2 > div.duration-300.ease-in-out.transition-colors.bg-base-800 > div.overflow-hidden > div.relative > div > div:nth-child(9) > div > table > tbody > tr:nth-child(" + i + ")");
             if (element.children.length < 7) {
                 let td1 = document.createElement('td');
                 td1.innerHTML = land.numberOfDroids;
@@ -91,5 +91,8 @@
 
     waitForElementToExist('app antialiased Layout', init);
 
+    function getReactInstance() {
+        return Object.values(document.querySelector('.app'))[0].return.dependencies.firstContext.context._currentValue;
+    };
 
 })();
