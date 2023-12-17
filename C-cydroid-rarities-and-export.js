@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Cydroids rarities and export
-// @version      0.1.4
+// @version      0.2.0
 // @description  Downloads a file containing all your droids and their rarities
-// @author       GasperZ5 -- Gašper#9055
+// @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
 // ==/UserScript==
 
@@ -13,36 +13,31 @@ console.log('Cydroid rarities and export Script by Gašper added');
     let droidIds = [];
     let droids = [];
     let landfieldNames = [];
-    let pageCount = Infinity;
+    let pageCount = 1;
     let page = 1;
     let bitEnough = true;
 
+    let react = getReactInstance();
+
     do {
-        console.log(`Getting droid page ${page}`);
-        await grabPage(page)
-            .then(responseData => {
-                data = JSON.parse(responseData);
-                for (let i = 0; i < data.data.length; i++) {
-                    const element = data.data[i];
-                    if (element.meta.droidIds.length === 0) {
-                        bitEnough = false;
-                        break;
-                    }
-                    landfieldNames[element.id] = element.attributes.description.split(',').join('');
-                    droidIds.push(element.meta.droidIds);
-                }
-                pageCount = data.meta.pages;
-            })
-            .catch(err => {
-                console.log(err);
-                console.log('error on page ' + page);
-            });
+        console.log(`Getting droid page ${page} / ${pageCount}`);
+        let data = await grabPage(page);
+        for (let i = 0; i < data?.data?.length; i++) {
+            const element = data.data[i];
+            if (element.meta.droidIds.length === 0) {
+                bitEnough = false;
+                break;
+            }
+            landfieldNames[element.id] = element.attributes.description.split(',').join('');
+            droidIds.push(...element.meta.droidIds);
+        }
+        pageCount = data.meta.pages;
         page++;
         await sleep(1000);
 
     } while (pageCount > page && bitEnough);
 
-    droidIds = droidIds.flat();
+    console.log(`Getting ${droidIds.length} droids`);
 
     for (let i = 0; i < droidIds.length; i += 100) {
         const element = droidIds.slice(i, i + 100);
@@ -59,7 +54,7 @@ console.log('Cydroid rarities and export Script by Gašper added');
                 console.log('error on droid ids' + i);
             });
         await sleep(1000);
-        console.log(`Getting droids ${i+1} - ${i + 100}`);
+        console.log(`Getting droids ${i + 1} - ${i + 100}`);
     }
 
     let final = [];
@@ -117,14 +112,14 @@ console.log('Cydroid rarities and export Script by Gašper added');
             rarities[droid.rarity].building++;
             building++;
         }
-        if(!states[droid.state]){
+        if (!states[droid.state]) {
             states[droid.state] = 1;
         }
-        else{
+        else {
             states[droid.state]++;
         }
-        if(droid.state === 'dispensing'){
-            etherDispensing+=droid.storage;
+        if (droid.state === 'dispensing') {
+            etherDispensing += droid.storage;
         }
     }
     etherDispensing = etherDispensing.toFixed(2);
@@ -164,25 +159,7 @@ console.log('Cydroid rarities and export Script by Gašper added');
     createDownloadFile(csv, 'droids');
 
     async function grabPage(page) {
-        const promise = new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', `https://r.earth2.io/droids/landfields?page=${page}&q=&sortBy=tethered&sortDir=desc`);
-            xhr.setRequestHeader('accept', 'application/json, text/plain, */*');
-            xhr.setRequestHeader('x-csrftoken', document.querySelector('[name="csrfmiddlewaretoken"]').value);
-            xhr.withCredentials = true;
-            xhr.onload = () => {
-                if (xhr.status >= 400) {
-                    reject(xhr.response);
-                } else {
-                    resolve(xhr.response);
-                }
-            };
-            xhr.onerror = () => {
-                reject('Something went wrong!');
-            };
-            xhr.send();
-        });
-        return promise;
+        return await react.api.getLandfieldsDroids({page:page,sortBy:'tethered',sortDir:'desc'});
     };
 
     async function getDroids(droidIds) {
@@ -219,7 +196,8 @@ console.log('Cydroid rarities and export Script by Gašper added');
         return query;
     }
 
-    async function sleep(ms) {
+    function sleep(ms) {
+        if (ms > 2000) console.log(`Sleeping for ${ms}ms`);
         return new Promise(resolve => setTimeout(resolve, ms));
     };
 
@@ -254,8 +232,10 @@ console.log('Cydroid rarities and export Script by Gašper added');
             return 'legendary';
         }
         return 'undefined';
-    }   
+    }
 
-
+    function getReactInstance() {
+        return Object.values(document.querySelector('.app'))[0].return.dependencies.firstContext.context._currentValue;
+    }
 
 })();

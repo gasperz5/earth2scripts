@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Get E-Ther claimed
-// @version      0.1.3
+// @version      0.1.4
 // @description  Get E-Ther claim transactions for E2 and export them to CSV file
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -28,7 +28,7 @@
     const react = getReactInstance();
 
     let includedProps = {};
-    let transactions = await getTransactionsForDays(HOURS_FOR_TRANSACTIONS);
+    let transactions = await getTransactionsForHours(HOURS_FOR_TRANSACTIONS);
 
     localStorage.setItem('transactions', JSON.stringify(transactions));
     localStorage.setItem('includedProps', JSON.stringify(includedProps));
@@ -58,6 +58,7 @@
     }
 
     function sleep(ms) {
+        if (ms > 2000) console.log(`Sleeping for ${ms}ms`);
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
@@ -68,10 +69,10 @@
             page: page,
             type: TYPE
         });
-        return res;
+        return res || {data: [], included: [], meta: {}};
     }
 
-    async function getTransactionsForDays(hours) {
+    async function getTransactionsForHours(hours) {
         console.log(`Getting transactions for the last ${hours} hours`);
 
         const pageSize = 100;
@@ -79,11 +80,24 @@
         let pageCount = 1;
         let transactions = [];
         let end_date = new Date();
+        let max_error_count = 5;
+        let error_count = 0;
         end_date.setHours(end_date.getHours() - hours);
 
         while (page <= pageCount) {
 
             const { data, included, meta } = await getTransactionPage(page);
+
+            if (data.length === 0) {
+                if (error_count > max_error_count) {
+                    console.log(`Page ${page} / ${pageCount} encountered an error - stopping`);
+                    break;
+                }
+                console.log(`Page ${page} / ${pageCount} encountered an error - retrying`);
+                await sleep(5000+error_count*2000);
+                error_count++;
+                continue;
+            }
 
             if (transactions.length === 0) {
                 pageCount = Math.ceil(meta.totalCount / pageSize);

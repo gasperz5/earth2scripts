@@ -56,7 +56,7 @@ console.log('Speed up Cydroid Slotting Script by Gašper added');
 
         const arrowContainer = document.createElement('div');
         arrowContainer.innerHTML = `<button id="previousArrow">Previous</button><button id="nextArrow">Next</button>`;
-        document.querySelector("#mgmt-right-panel > div.relative.overflow-hidden.styles_cornersFrame__2lJY2 > div > div > div.flex.flex-col.items-center > div.flex.h-40.items-center.justify-center.rounded-full.overflow-hidden.w-40.styles_backgroundGrid__16TvD.styles_fadeBg__2ltM_").appendChild(arrowContainer);
+        document.querySelector("#mgmt-right-panel > div.relative.overflow-hidden.styles_cornersFrame__2lJY2 > div > div > div.flex.flex-col.items-center > div.flex.w-full.justify-center > div").appendChild(arrowContainer);
 
         const previousArrow = document.getElementById('previousArrow');
         const nextArrow = document.getElementById('nextArrow');

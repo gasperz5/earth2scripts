@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Civilian stats and export
-// @version      0.1.0
+// @version      0.2.0
 // @description  Downloads a file containing all your civilians and their stats
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -9,6 +9,8 @@
 console.log('Civilian stats and export Script by Gašper added');
 
 (async function () {
+
+    let react = getReactInstance();
 
     let civilianIds = [];
     let civilians = [];
@@ -19,29 +21,20 @@ console.log('Civilian stats and export Script by Gašper added');
 
     do {
         console.log(`Getting civilian page ${page} / ${pageCount}`);
-        await grabPage(page)
-            .then(responseData => {
-                data = JSON.parse(responseData);
-                for (let i = 0; i < data.data.length; i++) {
-                    const element = data.data[i];
-                    landfieldNames[element.id] = element.attributes.description.split(',').join('');
-                    civilianIds.push(element.meta.civilianIds);
-                }
-                pageCount = data.meta.pages;
-            })
-            .catch(err => {
-                console.log(err);
-                console.log('error on page ' + page);
-            });
+        const data = await grabPage(page);
+        for (let i = 0; i < data?.data?.length; i++) {
+            const element = data.data[i];
+            landfieldNames[element.id] = element.attributes.description.split(',').join('');
+            civilianIds.push(...element.meta.civilianIds);
+        }
+        pageCount = data.meta.pages;
         page++;
         await sleep(1000);
 
     } while (pageCount >= page);
 
-    civilianIds = civilianIds.flat();
-
     console.log('---- ---- ---- ----');
-
+    console.log(`Getting ${civilianIds.length} civilians`);
 
     for (let i = 0; i < civilianIds.length; i += 30) {
         const element = civilianIds.slice(i, i + 30);
@@ -164,25 +157,7 @@ console.log('Civilian stats and export Script by Gašper added');
     };
 
     async function grabPage(page) {
-        const promise = new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', `https://r.earth2.io/civilians/landfields?filterBy=has_civilians&page=${page}&q=&sortBy=location&sortDir=desc`);
-            xhr.setRequestHeader('accept', 'application/json, text/plain, */*');
-            xhr.setRequestHeader('x-csrftoken', document.querySelector('[name="csrfmiddlewaretoken"]').value);
-            xhr.withCredentials = true;
-            xhr.onload = () => {
-                if (xhr.status >= 400) {
-                    reject(xhr.response);
-                } else {
-                    resolve(xhr.response);
-                }
-            };
-            xhr.onerror = () => {
-                reject('Something went wrong!');
-            };
-            xhr.send();
-        });
-        return promise;
+        return await react.api.getLandfieldsCivilians({ filterBy: 'has_civilians', page: page, sortBy: 'location', sortDir: 'desc' });
     };
 
     async function getcivilians(civilianIds) {
@@ -219,7 +194,8 @@ console.log('Civilian stats and export Script by Gašper added');
         return query;
     }
 
-    async function sleep(ms) {
+    function sleep(ms) {
+        if (ms > 2000) console.log(`Sleeping for ${ms}ms`);
         return new Promise(resolve => setTimeout(resolve, ms));
     };
 
@@ -233,5 +209,9 @@ console.log('Civilian stats and export Script by Gašper added');
         console.log(`Downloaded file ${prefix}.csv`);
 
     };
+
+    function getReactInstance() {
+        return Object.values(document.querySelector('.app'))[0].return.dependencies.firstContext.context._currentValue;
+    }
 
 })();
