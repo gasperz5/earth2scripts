@@ -21,7 +21,7 @@ console.log('Unslot properties Script by Gašper added');
         return;
     }
 
-    const PER_PAGE = 100;
+    const PER_PAGE = 1000;
 
     let jewelIds = [];
     let page = 1;
@@ -54,7 +54,7 @@ console.log('Unslot properties Script by Gašper added');
             });
         }
 
-        pageCount = Math.ceil(meta.count / 20);
+        pageCount = Math.ceil(meta.count / PER_PAGE);
         console.log(`Got page ${page} of ${pageCount}`);
         page++;
         await sleep(1000);
