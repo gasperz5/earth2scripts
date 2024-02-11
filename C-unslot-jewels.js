@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Unslot properties
-// @version      0.1.1
+// @version      0.1.2
 // @description  Unslot all the jewels from your properties
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -62,7 +62,7 @@ console.log('Unslot properties Script by Gašper added');
     } while (pageCount >= page);
 
     console.log(`Total jewels slotted : ${jewelIds.length}`);
-    console.log('This will take about ' + parseInt(jewelIds.length / 60) + ' minutes to complete')
+    console.log('This will take about ' + parseInt(jewelIds.length / 51) + ' minutes to complete')
 
     error_count = 0;
 

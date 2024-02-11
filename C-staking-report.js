@@ -1,6 +1,6 @@
     // ==UserScript==
     // @name         Staking report
-    // @version      0.2.0
+    // @version      0.2.1
     // @description  Calculates your staking rewards and refunds for 100%, 50% and 6,5% essence staking pools and prints them in the console
     // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
     // @support      https://www.buymeacoffee.com/gasper
@@ -104,7 +104,7 @@
         let totalBalance = (parseFloat(total100) + parseFloat(total50) + parseFloat(total6point5)).toFixed(2);
 
         console.log(`----- ----- ----- ----`);
-        console.log(totalBalance > 0 ? `%cYou are in good profit ${totalBalance} essence no refund needed` : `%cGet that refund you are in the negative ${totalBalance} essence - stakingrefund@earth2.io`, totalBalance > 0 ? 'color: green' : 'color: red')
+        console.log(totalBalance > 0 ? `%cYou are in good profit ${totalBalance} essence` : `%cYou are in the negative ${totalBalance} essence`, totalBalance > 0 ? 'color: green' : 'color: red')
 
 
 
