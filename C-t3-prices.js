@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         T3 territory prices
-// @version      0.1.4
+// @version      0.1.5
 // @description  Displays the prices of open T3 territories
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -93,6 +93,8 @@
             'Tiles': t.tileCount,
             'Link': `${react.appStore.url}/?lat=${t.attributes.center[1]}&lng=${t.attributes.center[0]}#`
         })), ['Territory', 'Price per Tile', 'Tiles', 'Link']);
+        let totalTiles = territories.reduce((acc, t) => acc + t.tileCount, 0);
+        console.log(`Total tiles: ${totalTiles}`);
     }
 
     function approximateTileCount(price) {
