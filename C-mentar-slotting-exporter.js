@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Mentar Slotting Exporter
-// @version      0.4.1
+// @version      0.4.2
 // @description  Downloads a file containing all your mentars and their slotting efficency and empty slots count (and brilliants count)
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -14,7 +14,7 @@ console.log('Mentar Slotting Exporter Script by Gašper added');
     const T1_MIN_PROPERTY_SIZE = 1;
     const T2_MIN_PROPERTY_SIZE = 1; // set to 4 if you want to filter out T2 properties with size 1-3
 
-    const PER_PAGE = 100;
+    const PER_PAGE = 250;
 
     let properties = [];
     let count = 0;
@@ -99,7 +99,7 @@ console.log('Mentar Slotting Exporter Script by Gašper added');
         totalJewelSlots += element.slots_count;
         data += `${element.description.split(',').join('')},${element.tiles},${element.slots_count},${element.empty_slots_count},${parseFloat(element.efficency).toFixed(2)},=HYPERLINK("https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}"),${element.brilliants}\r\n`;
         if (element.brilliants > 0) {
-            console.log(`Property ${element.id} has ${element.brilliants} brilliants. Check it at https://app.earth2.io/#resources/storage/jewels/slotting/${element.id}`);
+            console.log(`Property ${element.description} has ${element.brilliants} brilliants. Check it at https://app.earth2.io/#property-inventory/storage/jewels/slotting/${element.id}`);
         }
     }
 
