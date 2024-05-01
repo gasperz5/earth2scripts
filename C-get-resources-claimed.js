@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Get resources claimed
-// @version      0.1.6
+// @version      0.1.2
 // @description  Get resources transactions for E2 and export them to CSV file
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -11,7 +11,7 @@
     'use strict';
 
     await sleep(1);
-    console.log('Get E-Ther claimed script by Gašper added - please wait for the script to finish and don\'t claim E-Ther while the script is running');
+    console.log('Get resources claimed script by Gašper added - please wait for the script to finish and don\'t claim E-Ther & resources while the script is running');
 
     try {
         validateUserLogin();
