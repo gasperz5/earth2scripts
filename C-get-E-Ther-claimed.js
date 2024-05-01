@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Get E-Ther claimed
-// @version      0.1.5
+// @version      0.1.6
 // @description  Get E-Ther claim transactions for E2 and export them to CSV file
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -168,15 +168,15 @@
 
     function donwloadCSV(t1, t2, t3) {
         if (confirm('Do you want to download the CSV file with the transactions?')) {
-            let csv = 'Location,Tier,Tile Count,Ammount,Link\n';
+            let csv = 'Location,Tier,Tile Count,Ammount,Ether per Tile,Link\n';
             t1.forEach(el => {
-                csv += `${el.landfield.location.split(',').join('')},1,${el.landfield.tileCount},${el.amount.toFixed(2)},=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")\n`;
+                csv += `${el.landfield.location.split(',').join('')},1,${el.landfield.tileCount},${el.amount.toFixed(2)},${(el.amount/el.landfield.tileCount).toFixed(3)},=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")\n`;
             });
             t2.forEach(el => {
-                csv += `${el.landfield.location.split(',').join('')},2,${el.landfield.tileCount},${el.amount.toFixed(2)},=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")\n`;
+                csv += `${el.landfield.location.split(',').join('')},2,${el.landfield.tileCount},${el.amount.toFixed(2)},${(el.amount/el.landfield.tileCount).toFixed(3)},=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")\n`;
             });
             t3.forEach(el => {
-                csv += `${el.landfield.location.split(',').join('')},3,${el.landfield.tileCount},${el.amount.toFixed(2)},=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")\n`;
+                csv += `${el.landfield.location.split(',').join('')},3,${el.landfield.tileCount},${el.amount.toFixed(2)},${(el.amount/el.landfield.tileCount).toFixed(3)},=HYPERLINK("https://app.earth2.io/#propertyInfo/${el.id}")\n`;
             });
             createDownloadFile(csv, 'E-Ther-claimed');
         }
