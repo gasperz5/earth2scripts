@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Remove jewels from bazaar
-// @version      0.1.0
+// @version      0.1.1
 // @description  Remove jewels from bazaar you can set the color and quality level if you want to remove only specific jewels
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -27,7 +27,7 @@
         }
         for (let index2 = 0; index2 < data.data.length; index2++) {
             const element = data.data[index2];
-            if (element.jewel.color_name == "TOPAZ" && element.jewel.quality_level == "CRACKED" && element.jewel.tier == 3 && element.jewel.price > 0.07) { } // Add your own conditions here and move the line below inside the if statement {}
+            if (element.jewel.color_name == "TOPAZ" && element.jewel.quality_level == "CRACKED" && element.jewel.tier == 3 && element.price > 0.07) { } // Add your own conditions here and move the line below inside the if statement {}
             await removeOffer(element);
 
         }
