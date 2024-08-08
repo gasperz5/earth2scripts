@@ -12,11 +12,13 @@
     let react = getReactInstance();
 
     while (react == null) {
+        console.log('Waiting for react instance');
         await sleep(1000);
         react = getReactInstance();
     }
 
     while(react.notificationHubStore.inboxStore.isLoading) {
+        console.log('Waiting for inbox to load');
         await sleep(1000);
     }
     await sleep(100);
