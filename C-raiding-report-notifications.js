@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Raiding report from notificatios
-// @version      0.1.3
+// @version      0.1.4
 // @description  Checks failed and successful raids and puts them in a file
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -34,7 +34,7 @@
             console('Something went wrong')
             return;
         }
-        notifications.push(response.results);
+        notifications.push(...response.results);
     
     }
 
