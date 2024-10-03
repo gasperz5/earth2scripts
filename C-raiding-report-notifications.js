@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Raiding report from notificatios
-// @version      0.1.2
+// @version      0.1.3
 // @description  Checks failed and successful raids and puts them in a file
 // @author       GasperZ5 -- gasperz (Discord) -- gasper (7.5% code for E2)
 // @support      https://www.buymeacoffee.com/gasper
@@ -12,11 +12,33 @@
     let react = getReactInstance();
 
     const PLAIN = false; // change to true if your spreadsheet doesn't format correctly
+    const LIMIT = 100;
 
     let properties = {};
 
 
-    let notifications = (await react.api.getMyMessages({limit:9999,message_class:'NOTIFICATION'})).results;
+    const response1 = (await react.api.getMyMessages({limit:LIMIT,message_class:'NOTIFICATION',offset:0})) || {error:true};
+
+    if(response1?.error){
+        console('Something went wrong, are you logged in?')
+        return;
+    }
+
+    let notifications = response1.results;
+    let count = response1.count;
+    let pages = Math.ceil(count/LIMIT);
+
+    for (let i = 1; i < pages; i++) {
+        const response = (await react.api.getMyMessages({limit:LIMIT,message_class:'NOTIFICATION',offset:i*LIMIT})) || {error:true};
+        if(response?.error){
+            console('Something went wrong')
+            return;
+        }
+        notifications.push(response.results);
+    
+    }
+
+
     for (let index = 0; index < notifications.length; index++) {
 
         const element = notifications[index];
